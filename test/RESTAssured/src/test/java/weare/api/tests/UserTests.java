@@ -14,6 +14,7 @@ import io.qameta.allure.Description;
 import io.qameta.allure.Feature;
 import io.qameta.allure.Story;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -60,8 +61,20 @@ public class UserTests extends BaseTestSetup {
         String updateUserBody = UserService.updateProfileRequest(user);
         Response response = updatePersonalProfile(updateUserBody, cookie);
 
+        String responseBody = response.getBody().asString();
+        JsonPath jsonPath = new JsonPath(responseBody);
+        int userIdFromResponse = jsonPath.getInt("id");
+        String userFirstNameFromResponse = jsonPath.getString("firstName");
+        String userLastNameFromResponse = jsonPath.getString("lastName");
+        String userBirthYearFromResponse = jsonPath.getString("birthYear");
+
         int statusCode = response.getStatusCode();
         AssertHelper.assertStatusCode(statusCode, SC_OK);
+        AssertHelper.assertResponseBodyNotNull(response.getBody());
+        AssertHelper.assertUserIdEquals(user.getUserId(), userIdFromResponse);
+        Assertions.assertEquals(user.getFirstName(), userFirstNameFromResponse, "User first name does not match the expected value.");
+        Assertions.assertEquals(user.getLastName(), userLastNameFromResponse, "User last name does not match the expected value.");
+        Assertions.assertEquals(user.getBirthYear(), userBirthYearFromResponse, "User birth year does not match the expected value.");
     }
 
     @Feature("User Search")
