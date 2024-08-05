@@ -94,11 +94,6 @@ public class BaseTestSetup {
         return new Cookie.Builder("JSESSIONID", value).setPath("/").build();
     }
 
-    /**
-     * Provided configuration resolve REST Assured issue with a POST request without request body.
-     * Missing configuration leads to response status code 415 (Unsupported Media Type)
-     */
-//    @BeforeSuite
     @BeforeAll
     public static void setup() {
         EncoderConfig encoderConfig = RestAssured.config().getEncoderConfig()
