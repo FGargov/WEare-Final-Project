@@ -115,7 +115,7 @@ public class CommentTest extends BaseTestSetup {
         post.setPublic(true);
 
         String postJsonBody = PostService.postRequest(post);
-        Response response = UserService.createPost(postJsonBody, cookie);
+        Response response = PostService.createPublicPost(postJsonBody, cookie);
 
         POST_ID = response.getBody().jsonPath().get("postId");
 
@@ -132,20 +132,10 @@ public class CommentTest extends BaseTestSetup {
 
         baseURI = format("%s%s", BASE_URL, EDIT_COMMENT);
 
-        String editJsonBody = PostService.editPostRequest(post);
-
-        response = given()
-                .contentType(ContentType.JSON)
-                .cookie("JSESSIONID", cookie.getValue())
-                .queryParam("commentId", COMMENT_ID)
-                .queryParam("content", comment.getContent())
-                .body(editJsonBody)
-                .when()
-                .put();
+        response = CommentService.editComment(cookie, COMMENT_ID, comment.getContent() + " edited comment");
 
         int statusCode = response.getStatusCode();
         AssertHelper.assertStatusCode(statusCode, SC_OK);
-
     }
 
     @Feature("Comments")
