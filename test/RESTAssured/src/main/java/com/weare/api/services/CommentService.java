@@ -47,6 +47,17 @@ public class CommentService {
                 .get();
     }
 
+    public static Response editComment(Cookie cookie, Integer commentId, String editContent) {
+        return given()
+                .filter(new AllureRestAssured())
+                .contentType(ContentType.JSON)
+                .cookie("JSESSIONID", cookie.getValue())
+                .queryParam("commentId", commentId)
+                .queryParam("content", editContent)
+                .when()
+                .put();
+    }
+
     public static Response likeComment(Cookie cookie, Integer commentId) {
         return given()
                 .filter(new AllureRestAssured())
